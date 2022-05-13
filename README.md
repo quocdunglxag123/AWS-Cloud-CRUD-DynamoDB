@@ -1,10 +1,6 @@
 
 # Xây dựng ứng dụng trên AWS cho phép tạo Database và cung cấp api để thêm, xóa, sửa trên Database
 
-Đây là source code project cuối kì môn Điện toán đám mây của nhóm 11
-
-
-
 ## Các tính năng chính
 
 - Thêm, xóa table DynamoDB
@@ -16,7 +12,7 @@
 
 **Client:** Html, Css3, Bootstrap
 
-**Server:** Flask Framework, AWS Lambda, AWS SQS, AWS EC2
+**Server:** AWS Lambda, AWS SQS, AWS EC2
 
 **Database:** DynamoDB
 
@@ -172,7 +168,7 @@ Copy URL của hàng đợi vừa tạo ở trên, truy cập vào file routes.p
 Clone project từ github
 
 ```bash
-  git clone https://github.com/truongnguyenvan8801/Project_Nhom_11.git
+  git clone https://github.com/quocdunglxag123/AWS-Cloud-CRUD-DynamoDB.git
 ```
 
 Truy cập thư mục chứa project
@@ -224,7 +220,7 @@ Chạy chương trình
 ```
 clone project về máy ảo
 ```bash
-  git clone https://github.com/truongnguyenvan8801/Project_Nhom_11.git
+  git clone https://github.com/quocdunglxag123/AWS-Cloud-CRUD-DynamoDB.git
 ```
 Update các library cần thiết
 ```bash
