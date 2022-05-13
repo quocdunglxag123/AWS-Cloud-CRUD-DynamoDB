@@ -1,0 +1,38 @@
+<div class="card-header">
+    {% if table|length == 0%}
+    <div class="text-center"><strong >The query did not return any results</strong></div>
+    {% endif %}
+</div>
+<div class="card-block table-border-style">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            {% if table|length != 0%}
+            <thead>
+                <tr>
+                    <th class="list-checkbox-column">
+                        <input type="checkbox" id="selectall" name="selectall" autocomplete="off" onchange="eventCheckBox(this)" class="action-rowtoggle" title="Chọn tất cả hồ sơ">
+                    </th>
+                    {% for col in columns %}
+                    <th>{{col}}</th>
+                    {% endfor %}
+
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                {% for row in table %}
+                <tr id="row-{{loop.index}}" data-index="{{loop.index}}">                        
+                    <th scope="row">
+                        <input type="checkbox" value="{{loop.index}}" onchange="addEventListener_Checkbox(this)" name="" autocomplete="off" class="action-checkbox" value="" title="Chọn hồ sơ">
+                    </th>
+                    {% for col in columns %}
+                    <td>{{ row[col] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor%}
+                
+
+            </tbody>
+            {% endif %}
+        </table>
+    </div>
+</div>

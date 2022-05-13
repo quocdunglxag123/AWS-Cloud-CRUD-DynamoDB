@@ -1,0 +1,26 @@
+{% for table in tables%}
+<tr id="row-{{loop.index}}" data-index="{{loop.index}}">                        
+    <th scope="row">
+        <input type="checkbox" name="{{ table['Table']['TableName'] }}" autocomplete="off" class="action-checkbox" value="{{ table['Table']['TableName'] }}" onchange="addEventListener_Checkbox(this)" title="Chọn hồ sơ">
+    </th>
+    <td>{{ table['Table']['TableName'] }}</td>
+    {% with status=table['Table']['TableStatus']%}
+    {% if status == 'ACTIVE'%}
+    <td class="text-lowercase text-success font-weight-bold"><i class="ti-arrow-circle-down"></i>    {{ status }}</td>        
+    {% else %}
+    <td class="text-lowercase text-danger font-weight-bold">...{{ status}}</td>
+    {% endif %}
+    {% endwith %}
+    {% if table['Table']['AttributeDefinitions']|length > 2%}
+    <!-- {{ table['Table']['AttributeDefinitions'].pop(0)}} -->
+    {% endif %}
+    {% for attribute in table['Table']['AttributeDefinitions'] %}
+    
+    <td>{{ attribute['AttributeName'] }} {% with type=attribute['AttributeType'] %} {% if type=='S' %} (String) {% elif type=='N' %} (Number) {% else %} (Binary) {% endif %} {% endwith %}</td>
+
+    {% endfor %}
+    {% if table['Table']['AttributeDefinitions']|length < 2 %}
+    <td></td>
+    {% endif %}
+</tr>        
+{% endfor%}

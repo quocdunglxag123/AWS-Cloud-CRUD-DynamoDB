@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% block title %}
+Items | Management DynamoDB
+{% endblock %}
+{% block header%}
+<div class="page-header card">
+    <div class="row align-items-end">
+        <div class="col-lg-8">
+            <div class="page-header-title">
+                <i class="icofont icofont-list bg-c-green"></i>
+                <div class="d-inline">
+                    <h4>Items</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="page-header-breadcrumb">
+                <ul class="breadcrumb-title">
+                    <li class="breadcrumb-item">
+                        <a href="/">
+                            <i class="icofont icofont-home"></i>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('home_page') }}">DynamoDB</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="#!">Items</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock%}
+{% block content %}
+
+<!-- Hover table card start -->
+<div class="row">
+    <div class="col-sm-12">
+        <!-- Typography card start -->
+        <div class="card">
+            <div class="card-header" id="card-message">
+               
+            </div>
+            <div class="card-block typography">
+                <div class="row">
+                    <div class="col-sm-12 col-xl-3" style="border-right: 0.5px solid #9BA1A5;">
+                        <h4 class="sub-title"><b style="font-size:1.3rem; font-weight: 700; text-transform: capitalize;">Table({{ list_tables|length }})</b>
+                        <i class="ti-reload" style="float:right; font-size: 1.1rem; font-weight:bold;"></i>
+                        </h4>
+                        {% for table in list_tables %}
+                        <h6 class="sub-title" style="text-transform: none; font-weight: normal;">
+                            <div class="form-check ml-4">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="radio-{{loop.index}}" value="{{ table['table_name'] }}" autocomplete="off">
+                                <label class="form-check-label" for="radio-{{loop.index}}">
+                                    {{ table['table_name'] }}
+                                </label>
+                            </div>
+                        </h6>
+                        {% endfor %}
+                    
+                    </div>
+                    <div id="main-body-table" class="col-sm-12 col-xl-9">
+                        <h6 class="text-center pt-5"><strong>On this page, query and scan for items.</strong></h6>
+                        <h6 class="text-center ">Choose a table to get started. Standard query and scanning prices applies.</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Typography card end -->
+    </div>
+</div>
+<!-- Hover table card end -->
+<!-- Main-body end -->
+<div id="styleSelector">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+{% endblock %}
+{% block script%}
+<script>
+
+    var enableDelete = undefined;
+    var checkboxs = undefined;
+    var selectall = undefined;
+    var currentTable = undefined;
+    var columns = undefined;
+    var reloadHTML = `<div id="loading-bar-spinner" class="spinner"><div class="spinner-icon"></div></div>`;
+    var reloadBtn = undefined;
+
+    radioButtons = document.querySelectorAll('input[type="radio"]');
+    radioButtons.forEach(el => el.addEventListener('click', (el) => {
+        loadDataTable(el.currentTarget.value);
+    }));
+
+
+    function reloadHandler(element){
+        loadDataTable(element.getAttribute('data-table-name'));
+    }
+
+    function deleteHandler(element){
+        if(!element.classList.contains('disabled'))
+        {
+            let itemsDeleted = [];
+            let tableName = element.getAttribute('data-table-name');
+            checkboxs = document.getElementsByClassName('action-checkbox');
+            for(let i = 0; i < checkboxs.length; i++){
+                if(checkboxs[i].checked)
+                {
+                    // tableDeleted.push(checkboxs[i].getAttribute('value'));
+                    itemsDeleted.push(parseInt(checkboxs[i].getAttribute('value'),10) - 1);
+                }
+            }
+            
+            fetch("{{ url_for('ajax_delete_item') }}", {
+                method: "post",
+                body: JSON.stringify({
+                    'table_name': tableName,
+                    "items": itemsDeleted,
+                    'columns': columns
+                }), headers:{
+                    "content-type": 'application/json',
+                }
+            })
+            .then(response =>{
+                if(response.ok){
+                    loadDataTable(tableName);
+                    return response.json();
+                }
+            })
+            .then(json => {
+                document.getElementById('card-message').innerHTML = `<div class="alert alert-${json.category_msg}">
+                <button class="m1-2 mb-1 close " type="button" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+                ${json.msg}
+                </div>`;
+            });
+        }
+    }
+
+    async function getBaseFrameTable(tableName){
+        let response = await fetch(`{{ url_for('ajax_base_html_table') }}?table-name=${tableName}`,{
+            method: "post",
+            body: JSON.stringify({
+                "table_name": tableName
+            }),
+            headers: {
+                "content-type": "application/json"
+            }
+        })
+        .then(response => {
+            return response;
+        });
+        let json = await response.json();
+        return json;
+    }
+
+    function loadDataTable(tableName){
+        getBaseFrameTable(tableName).then(json => {
+            document.getElementById('main-body-table').innerHTML = json.html;
+            fetch(`{{ url_for('ajax_load_items_table') }}`,{
+                method: "post",
+                body: JSON.stringify({
+                    "table_name": tableName
+                }),
+                headers: {
+                    "content-type": "application/json"
+                }
+            })
+            .then(response => {
+                if(response.ok){
+                    return response.json();
+                }
+            })
+            .then(json => {
+                currentTable = json.table;
+                columns = json.columns;
+                document.querySelector('#table-length b').innerHTML = `Items returned (${currentTable.length})`
+                document.getElementById('main-data-table').innerHTML = json.html;
+                
+                reloadBtn = document.getElementById('reload-btn');
+                selectall = document.getElementById('selectall');
+                enableDelete = document.getElementById('delete-btn');
+                enableDelete.style['pointer-events'] = 'none';
+                checkboxs = document.getElementsByClassName('action-checkbox');
+            });
+        });
+    }
+
+
+    function checkDisabled(){
+        if (enableDelete != undefined){
+            console.log(enableDelete.getAttribute('style'));
+            if(enableDelete.classList.contains('disabled')){
+                return true;
+            }
+            return false;
+
+        }
+        
+    }
+
+    function disabled(){
+        if(enableDelete != undefined)
+        {
+            enableDelete.classList.add('disabled');
+            enableDelete.style['pointer-events'] = 'none';
+        }
+    }
+
+    function enabled(){
+        if(enableDelete != undefined)
+        {
+            enableDelete.classList.remove('disabled');
+            enableDelete.style['pointer-events'] = 'initial';
+        }
+    }
+
+    function eventCheckBox(element) {
+        if(enableDelete != undefined && checkboxs != undefined)
+        {
+            if(element.checked){
+                if(checkDisabled())
+                    enableDelete.classList.remove('disabled'); 
+                    enableDelete.style['pointer-events'] = 'initial';
+
+
+            }
+            else{
+                enableDelete.classList.add('disabled');  
+                enableDelete.style['pointer-events'] = 'none';                  
+            }
+            for(let i = 0; i < checkboxs.length ; i++) { //zero-based array
+                checkboxs[i].checked = element.checked;
+
+            }
+        }
+        
+    }
+
+    
+    function addEventListener_Checkbox(element)
+    {
+        if(element.checked){
+            element.checked = !selectall.checked;
+        }
+        checkboxs = document.getElementsByClassName('action-checkbox');
+        let count = 0;
+        for(let i = 0; i < checkboxs.length; i++){
+            if(checkboxs[i].checked)
+                count++;
+        }
+        if(count == 0){
+            disabled();
+        }
+        else{
+            enabled();
+        }
+
+
+    }
+</script>
+{% endblock %}

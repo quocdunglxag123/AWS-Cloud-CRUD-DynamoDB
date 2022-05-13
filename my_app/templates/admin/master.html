@@ -1,0 +1,328 @@
+{% import 'admin/layout.html' as layout with context -%}
+{% import 'admin/static.html' as admin_static with context %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{% block title %}{% if admin_view.category %}{{ admin_view.category }} - {% endif %}{{ admin_view.name }} - {{ admin_view.admin.name }}{% endblock %}</title>
+    <!-- HTML5 Shim and Respond.js IE9 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+      <!-- Meta -->
+      {% block head_meta %}
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      {% endblock %}
+      {% block head_css %}
+      <!-- Favicon icon -->
+      <link rel="icon" href="/static/assets/images/favicon.ico" type="image/x-icon">
+      <!-- Google font-->
+      <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+      <!-- Required Fremwork -->
+      <link rel="stylesheet" type="text/css" href="/static/assets/css/bootstrap/css/bootstrap.min.css">
+      <!-- themify-icons line icon -->
+      <link rel="stylesheet" type="text/css" href="/static/assets/icon/themify-icons/themify-icons.css">
+      <!-- ico font -->
+      <link rel="stylesheet" type="text/css" href="/static/assets/icon/icofont/css/icofont.css">
+      <!-- Style.css -->
+      <link rel="stylesheet" type="text/css" href="/static/assets/css/style.css">
+      <link rel="stylesheet" type="text/css" href="/static/assets/css/jquery.mCustomScrollbar.css">
+
+      
+      <link href="{{ admin_static.url(filename='admin/css/bootstrap4/admin.css', v='1.1.1') }}" rel="stylesheet">
+      <link href="{{ admin_static.url(filename='bootstrap/bootstrap4/css/font-awesome.min.css', v='4.7.0') }}" rel="stylesheet">
+      {% if admin_view.extra_css %}
+      {% for css_url in admin_view.extra_css %}
+      <link href="{{ css_url }}" rel="stylesheet">
+      {% endfor %}
+      {% endif %}
+      
+      {% endblock %}
+      {% block head %}
+      {% endblock %}
+      {% block head_tail %}
+      {% endblock %}
+      <style>
+        #loading-bar-spinner.spinner {
+            left: 50%;
+            margin-left: -20px;
+            top: 50%;
+            margin-top: -20px;
+            position: absolute;
+            z-index: 19 !important;
+            animation: loading-bar-spinner 400ms linear infinite;
+        }
+
+        #loading-bar-spinner.spinner .spinner-icon {
+            width: 40px;
+            height: 40px;
+            border:  solid 4px transparent;
+            border-top-color:  #00C8B1 !important;
+            border-left-color: #00C8B1 !important;
+            border-radius: 50%;
+        }
+
+        @keyframes loading-bar-spinner {
+          0%   { transform: rotate(0deg);   transform: rotate(0deg); }
+          100% { transform: rotate(360deg); transform: rotate(360deg); }
+      }
+  </style> 
+</head>
+
+<body>
+    {% block page_body %}
+    <!-- Pre-loader start -->
+    <div class="theme-loader">
+        <div class="ball-scale">
+            <div class='contain'>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pre-loader end -->
+    <div id="pcoded" class="pcoded">
+        <div class="pcoded-overlay-box"></div>
+        <div class="pcoded-container navbar-wrapper">
+
+            <nav class="navbar header-navbar pcoded-header">
+                <div class="navbar-wrapper">
+
+                    <div class="navbar-logo">
+                        <a class="mobile-menu" id="mobile-collapse" href="#!">
+                            <i class="ti-menu"></i>
+                        </a>
+                        <a class="mobile-search morphsearch-search" href="#">
+                            <i class="ti-search"></i>
+                        </a>
+                        {% block brand %}
+                        <a class="navbar-brand brand-logo" href="{{ admin_view.admin.url }}">{{ admin_view.admin.name }}</a>
+                        {% endblock %}
+                        
+                        <a class="mobile-options">
+                            <i class="ti-more"></i>
+                        </a>
+                    </div>
+
+                    <div class="navbar-container container-fluid">
+                        <ul class="nav-left">
+                            <li>
+                                <div class="sidebar_toggle"><a href="javascript:void(0)"><i class="ti-menu"></i></a></div>
+                            </li>
+
+                            <li>
+                                <a href="#!" onclick="javascript:toggleFullScreen()">
+                                    <i class="ti-fullscreen"></i>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav-right">
+                            <li class="header-notification">
+                                <a href="#!">
+                                    <i class="ti-bell"></i>
+                                    <span class="badge bg-c-pink"></span>
+                                </a>
+                                <ul class="show-notification">
+                                    <li>
+                                        <h6>Notifications</h6>
+                                        <label class="label label-danger">New</label>
+                                    </li>
+                                    
+                                </ul>
+                            </li>
+                            <li class="user-profile header-notification">
+                                <a href="#!">
+                                    <img src="/static/assets/images/images.png" class="img-radius" alt="User-Profile-Image">
+                                    <span>{{ current_user['user_name'] }}</span>
+                                    <i class="ti-angle-down"></i>
+                                </a>
+                                <ul class="show-notification profile-notification">
+                                    <!-- <li>
+                                        <a href="#!">
+                                            <i class="ti-settings"></i> Settings
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="ti-user"></i> Profile
+                                        </a>
+                                    </li> -->
+                                    
+                                    <li>
+                                        <a href="{{ url_for('logout') }}">
+                                            <i class="ti-layout-sidebar-left"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <div class="pcoded-main-container">
+                <div class="pcoded-wrapper">
+                    <nav class="pcoded-navbar">
+                        <div class="sidebar_toggle"><a href="#"><i class="icon-close icons"></i></a></div>
+                        <div class="pcoded-inner-navbar main-menu">
+                            <div class="">
+                                <div class="main-menu-header">
+                                    <img class="img-40 img-radius" src="/static/assets/images/images.png" alt="User-Profile-Image">
+                                    <div class="user-details">
+                                        <span>{{ current_user['user_name'] }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="main-menu-content">
+                                    <ul>
+                                        <li class="more-details">
+                                            <a href="#"><i class="ti-user"></i>View Profile</a>
+                                            <a href="#!"><i class="ti-settings"></i>Settings</a>
+                                            <a href="{{ url_for('logout') }}"><i class="ti-layout-sidebar-left"></i>Logout</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="pcoded-search">
+                                <span class="searchbar-toggle">  </span>
+                                <div class="pcoded-search-box ">
+                                    <input type="text" placeholder="Search">
+                                    <span class="search-icon"><i class="ti-search" aria-hidden="true"></i></span>
+                                </div>
+                            </div>
+                            <div class="pcoded-navigatio-lavel" data-i18n="nav.category.navigation">Layout</div>
+                            {% block main_menu %}
+                            <ul class="pcoded-item pcoded-left-item">
+                                {{ layout.menu() }}
+                            </ul>
+                            {% endblock %}
+                            {% block menu_links %}
+                            <ul class="nav navbar-nav navbar-right">
+                                {{ layout.menu_links() }}
+                            </ul>
+                            {% endblock %}
+                            
+                            {% block access_control %}
+                            {% endblock %}
+                        </div>
+                    </nav>
+                    {% block messages %}
+                    {{ layout.messages() }}
+                    {% endblock %}
+
+                    {# store the jinja2 context for form_rules rendering logic #}
+                    {% set render_ctx = h.resolve_ctx() %}
+                    <div class="pcoded-content">
+                        <div class="pcoded-inner-content">
+                            <div class="main-body">
+                                <div class="page-wrapper">
+                                    {% block header %}
+                                    
+                                    {% endblock %}
+                                    <div class="page-body">
+                                       {% block body %}{% endblock %}
+                                   </div>
+
+                                   <div id="styleSelector">
+
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+               
+           </div>
+       </div>
+   </div>
+   {% endblock %}
+   <!-- Warning Section Starts -->
+   <!-- Older IE warning message -->
+
+   <!-- Warning Section Ends -->
+   {% block tail_js %}
+   <!-- Required Jquery -->
+   <script type="text/javascript" src="/static/assets/js/jquery/jquery.min.js"></script>
+   <script type="text/javascript" src="/static/assets/js/jquery-ui/jquery-ui.min.js"></script>
+   <script type="text/javascript" src="/static/assets/js/popper.js/popper.min.js"></script>
+   <script type="text/javascript" src="/static/assets/js/bootstrap/js/bootstrap.min.js"></script>
+   <!-- jquery slimscroll js -->
+   <script type="text/javascript" src="/static/assets/js/jquery-slimscroll/jquery.slimscroll.js"></script>
+   <!-- modernizr js -->
+   <script type="text/javascript" src="/static/assets/js/modernizr/modernizr.js"></script>
+   <!-- am chart -->
+   <script src="/static/assets/pages/widget/amchart/amcharts.min.js"></script>
+   <script src="/static/assets/pages/widget/amchart/serial.min.js"></script>
+   <!-- Todo js -->
+   <script type="text/javascript " src="/static/assets/pages/todo/todo.js "></script>
+   <!-- Custom js -->
+   <!-- <script type="text/javascript" src="/static/assets/pages/dashboard/custom-dashboard.js"></script> -->
+   <script type="text/javascript" src="/static/assets/js/script.js"></script>
+   <script type="text/javascript" src="/static/assets/js/SmoothScroll.js"></script>
+   <script type="text/javascript" src="/static/assets/js/pcoded.min.js"></script>
+   <script type="text/javascript" src="/static/assets/js/demo-12.js"></script>
+   <script type="text/javascript" src="/static/assets/js/jquery.mCustomScrollbar.concat.min.js"></script>
+   <script>
+
+    var $window = $(window);
+    var nav = $('.fixed-button');
+    $window.scroll(function(){
+        if ($window.scrollTop() >= 200) {
+           nav.addClass('active');
+       }
+       else {
+           nav.removeClass('active');
+       }
+   });
+</script>
+
+<script src="{{ admin_static.url(filename='vendor/moment.min.js', v='2.9.0') }}" type="text/javascript"></script>    
+<script src="{{ admin_static.url(filename='vendor/select2/select2.min.js', v='4.2.1') }}"
+type="text/javascript"></script>    
+{% if admin_view.extra_js %}
+{% for js_url in admin_view.extra_js %}
+<script src="{{ js_url }}" type="text/javascript"></script>
+{% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block tail %}
+{% endblock %}
+
+</body>
+
+</html>

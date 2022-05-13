@@ -1,0 +1,129 @@
+{% extends 'admin/master.html' %}
+{% block header%}
+<div class="page-header card">
+    <div class="row align-items-end">
+        <div class="col-lg-8">
+            <div class="page-header-title">
+                <i class="icofont icofont-database bg-c-blue"></i>
+                <div class="d-inline">
+                    <h4>Tables</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="page-header-breadcrumb">
+                <ul class="breadcrumb-title">
+                    <li class="breadcrumb-item">
+                        <a href="{{ url_for('admin.index') }}">
+                            <i class="icofont icofont-home"></i>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('tables.index') }}">DynamoDB</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="#!">Tables</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock%}
+{% block body %}
+<div class="card">
+    <div class="card-header">
+        <h4><b>Tables</b> ({{ log_table|length }}) </h4>
+        <!-- <span>use class <code>table-hover</code> inside table element</span> -->
+        <!-- <div class="card-header-right">    <ul class="list-unstyled card-option">        <li><i class="icofont icofont-simple-left "></i></li>        <li><i class="icofont icofont-maximize full-card"></i></li>        <li><i class="icofont icofont-minus minimize-card"></i></li>        <li><i class="icofont icofont-refresh reload-card"></i></li>        <li><i class="icofont icofont-error close-card"></i></li>    </ul></div> -->
+        <div class="card-header-right">
+            <button id="reload-btn" onclick="reloadHandler(this)" class="btn btn-outline-dark btn-square mr-3"><i class="ti-reload"></i></button>
+            
+        </div>
+    </div>
+    <div class="card-block table-border-style">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Partition key</th>
+                        <th>Sort key</th>
+                        <th>Created by</th>
+                        <th>Created at</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+
+                    
+                    {% for table in log_table%}
+                    <tr id="row-{{loop.index}}" data-index="{{loop.index}}">                        
+                        
+                        <td>{{ table['Table']['TableName'] }}</td>
+                        {% with status=table['Table']['TableStatus']%}
+                        {% if status == 'ACTIVE'%}
+                        <td class="text-lowercase text-success font-weight-bold"><i class="ti-arrow-circle-down"></i>    {{ status }}</td>        
+                        {% else %}
+                        <td class="text-lowercase text-danger font-weight-bold">...{{ status}}</td>
+                        {% endif %}
+                        {% endwith %}
+                        {% if table['Table']['AttributeDefinitions']|length > 2%}
+                        	<!-- {{ table['Table']['AttributeDefinitions'].pop(0)}} -->
+                        {% endif %}
+                        {% for attribute in table['Table']['AttributeDefinitions'] %}
+                        
+                        <td>{{ attribute['AttributeName'] }} {% with type=attribute['AttributeType'] %} {% if type=='S' %} (String) {% elif type=='N' %} (Number) {% else %} (Binary) {% endif %} {% endwith %}</td>
+
+                        {% endfor %}
+                        <td>{{ table['Created_by']['user_name']}}</td>
+                        <td>{{ table['Table']['CreationDateTime'] }}</td>
+                    </tr>        
+                    {% endfor%}
+                    
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Hover table card end -->
+<!-- Main-body end -->
+<div id="styleSelector">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+
+    var tableBody = document.getElementById('table-body');
+    var reloadHTML = `
+    <td><div id="loading-bar-spinner" class="spinner" style="margin-top: 50px;"><div class="spinner-icon"></div></div></td>`;
+
+    
+    function reloadHandler(element){
+        document.getElementById('table-body').innerHTML = reloadHTML;
+        fetch("{{ url_for('tables.ajax_load_tables')}}",{
+            method: "get",
+            headers: {
+                "content-type": "application/json"
+            }
+        })
+        .then(response => response.json())
+        .then(json => {
+            // let data = json.tables;
+            // document.getElementById('table-body').innerHTML = loadDataToRow(data);
+            document.getElementById('table-body').innerHTML = json.html;
+
+        });
+        checkboxs = document.getElementsByClassName('action-checkbox');  
+        addEventListener_Checkboxs();      
+    }
+    
+</script>
+{% endblock %}
+
+

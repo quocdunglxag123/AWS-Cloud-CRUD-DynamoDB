@@ -1,0 +1,544 @@
+{% extends 'base.html' %}
+{% block title %}
+Edit Item | Management DynamoDB
+{% endblock %}
+{% block header%}
+<div class="page-header card">
+    <div class="row align-items-end">
+        <div class="col-lg-8">
+            <div class="page-header-title">
+                <i class="icofont icofont-edit bg-c-blue"></i>
+                <div class="d-inline">
+                    <h4>Create Item</h4>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="page-header-breadcrumb">
+                <ul class="breadcrumb-title">
+                    <li class="breadcrumb-item">
+                        <a href="/">
+                            <i class="icofont icofont-home"></i>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('home_page') }}">DynamoDB</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="#!">Items: {{table_name}}</a>
+                    </li>
+                    <li class="breadcrumb-item"><a href="#!">Item editor</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock%}
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <!-- <form method="post" action="" name="formCreateTable"> -->
+            <div class="card">
+                <div class="card-header">
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="myTable" class="table table-bordered">
+                            <thead>
+                                <tr class="d-flex">
+                                    <th  class="col-2" style="position: relative; text-align: center;">Attribute name</th>
+                                    <th class="col-8" style="position: relative; text-align: center;">Value</th>
+                                    <th class="col-1" style="position: relative; text-align: center;">Type</th>
+                                    <th class="col-1" style="position: relative; text-align: center;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr class="d-flex">
+                                    <td class="col-2">
+                                        <h6 class="text-center" id="partition-key" data-partition-key="{{list_key[0]['AttributeName']}}" style="text-transform: none; font-weight: normal;font-weight: bold; display: flex; justify-content: center;">{{list_key[0]['AttributeName']}}<p style="font-style: italic; font-weight: normal;color: #687078;">-Partition key</p>
+                                        </h6>
+                                    </td>
+
+                                    <td class="col-8">
+
+                                        <input type="text" data-type="{{list_key[0]['AttributeType']}}" class="form-control input-sm" id="partition-value" value="" name="partition-value" placeholder="Empty value">
+                                    </td>
+                                    <td class="col-1">
+                                        <h6 class="text-center" style="text-transform: none; font-weight: normal;font-weight: bold;">{% with type=list_key[0]['AttributeType'] %} {% if type=='S' %} String {% elif type=='N' %} Number {% else %} Binary {% endif %} {% endwith %}
+                                        </h6>
+                                    </td>
+
+
+                                    <td class="col-1">
+
+                                    </td>
+                                </tr>
+                                <tr class="d-flex">
+                                    <td class="col-2">
+                                        <h6 class="text-center" id="sort-key" data-sort-key="{{list_key[1]['AttributeName']}}" style="text-transform: none; font-weight: normal;font-weight: bold; display: flex; justify-content: center;">{{list_key[1]['AttributeName']}}<p style="font-style: italic; font-weight: normal; color: #687078;">-Sort key</p>
+                                        </h6>
+                                    </td>
+
+                                    <td class="col-8">
+
+                                        <input type="text" data-type="{{list_key[1]['AttributeType']}}" class="form-control input-sm" id="sort-value"
+                                        name="sort-value" placeholder="Empty value">
+                                    </td>
+                                    <td class="col-1">
+                                        <h6 class="text-center" style="text-transform: none; font-weight: normal;font-weight: bold;">{% with type=list_key[1]['AttributeType'] %} {% if type=='S' %} String {% elif type=='N' %} Number {% else %} Binary {% endif %} {% endwith %}
+                                        </h6>
+                                    </td>
+
+
+                                    <td class="col-1">
+
+                                    </td>
+                                </tr>
+                                <!-- <tr class='d-flex'>
+                                    <td class="col-2">
+                                        <input name="nameColumnTable" type="text" class="form-control input-sm" placeholder="name column">
+                                    </td>
+                                    <td class='col-8'>
+
+                                        <div class="dropdown-primary dropdown open">
+                                            <button class="btn btn-primary dropdown-toggle btn-outline-primary waves-effect waves-light " type="button" id="dropdown-child" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="true"><i class="ti-plus"></i>Insert a field</button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdown-child" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut" style="max-height: 150px;overflow-y: auto;">
+                                                <a class="dropdown-item waves-light waves-effect" href="#">String</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="#">Number</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="#">Boolean</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="#">Binary</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="#">Null</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="#">String set</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="#">Number set</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="#">Binary set</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="#">List</a>
+                                                <a class="dropdown-item waves-light waves-effect" href="#">Map</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class='col-1' style="position: relative; text-align: center;">
+                                        <h6 class="text-center" style="text-transform: none; font-weight: normal;font-weight: bold;">
+                                            hello
+                                        </h6>
+                                    </td>
+                                    <td class='col-1'></td>
+                                </tr>
+                                <tr class="d-flex">
+                                    <td class="col-2 text-center">
+                                        <i class="ti-plus" style="position: absolute; top: 50%; transform: translateY(-50%); font-size: 20px;"></i>
+                                    </td>
+                                    <td class="col-8">
+                                        <input type="text" class="form-control input-sm" id="nameColumnTable1"
+                                        name="nameColumnTable1" placeholder="Empty value">
+                                    </td>
+                                    <td class="col-1">
+                                        <h6 class="text-center" style="text-transform: none; font-weight: normal;font-weight: bold;">String
+                                        </h6>
+                                    </td>
+                                    <td class="col-1">
+                                        <button id="delete-btn" class="btn btn-outline-dark btn-square">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr class='d-flex'>
+                                    <td class="col-2">
+                                        <input name="nameColumnTable" type="text" class="form-control input-sm" value="NewValue">
+                                    </td>
+                                    <td class='col-8 d-flex flex-row'>
+                                        <div class="form-check ml-4 pr-3">
+                                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="radio" value="true" >
+                                            <label class="form-check-label pl-0" for="radio">
+                                                True
+                                            </label>
+                                        </div>
+                                        <div class="form-check ml-4">
+                                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="radio" value="false" checked >
+                                            <label class="form-check-label pl-0" for="radio">
+                                                False
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td class='col-1' style="position: relative; text-align: center;">
+                                        <h6 class="text-center" style="text-transform: none; font-weight: normal;font-weight: bold;">
+                                            Boolean
+                                        </h6>
+                                    </td>
+                                    <td class="col-1">
+                                        <button id="delete-btn" class="btn btn-outline-dark btn-square">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr class='d-flex'>
+                                    <td class="col-2">
+                                        <input name="nameColumnTable" type="text" class="form-control input-sm" value="NewValue">
+                                    </td>
+                                    <td class='col-8 d-flex flex-row'>
+                                        <h6 style="text-transform: none; font-weight: normal;font-weight: bold;">
+                                            Null
+                                        </h6>
+                                    </td>
+                                    <td class='col-1' style="position: relative; text-align: center;">
+                                        <h6 class="text-center" style="text-transform: none; font-weight: normal;font-weight: bold;">
+                                            Null
+                                        </h6>
+                                    </td>
+                                    <td class="col-1">
+                                        <button id="delete-btn" class="btn btn-outline-dark btn-square">Delete</button>
+                                    </td>
+                                </tr>
+                                <tr class='d-flex'>
+                                    <td class="col-2">
+                                        <input name="nameColumnTable" type="text" class="form-control input-sm" value="NewValue">
+                                    </td>
+                                    <td class='col-8 d-flex'>
+                                        <button class="btn btn-primary btn-non-dropdown btn-outline-primary"><i class="ti-plus"></i>Insert a field</button>
+                                    </td>
+                                    <td class='col-1' style="position: relative; text-align: center;">
+                                        <h6 class="text-center" style="text-transform: none; font-weight: normal;font-weight: bold;">
+                                            String set
+                                        </h6>
+                                    </td>
+                                    <td class="col-1">
+                                        <button id="delete-btn" class="btn btn-outline-dark btn-square">Delete</button>
+                                    </td>
+                                </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="dropdown-primary dropdown-main dropdown open">
+                        <button class="btn btn-primary dropdown-toggle btn-outline-primary waves-effect waves-light " type="button" id="dropdown-main" data-toggle="dropdown"  aria-haspopup="true" aria-expanded="true"><i class="ti-plus"></i>Insert a field</button>
+                        <div class="dropdown-menu" aria-labelledby="dropdown-main" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut" style="max-height: 150px;overflow-y: auto;">
+                            <a class="dropdown-item waves-light waves-effect" data-type="S" href="#">String</a>
+                            <a class="dropdown-item waves-light waves-effect" data-type="N" href="#">Number</a>
+                            <a class="dropdown-item waves-light waves-effect" data-type="BOOL" href="#">Boolean</a>
+                            <a class="dropdown-item waves-light waves-effect" data-type="B" href="#">Binary</a>
+                            <a class="dropdown-item waves-light waves-effect" data-type="NULL" href="#">Null</a>
+                            <a class="dropdown-item waves-light waves-effect" data-type="SS" href="#">String set</a>
+                            <a class="dropdown-item waves-light waves-effect" data-type="NS" href="#">Number set</a>
+                            <a class="dropdown-item waves-light waves-effect" data-type="BS" href="#">Binary set</a>
+                            <a class="dropdown-item waves-light waves-effect" data-type="L" href="#">List</a>
+                            <a class="dropdown-item waves-light waves-effect" data-type="M" href="#">Map</a>
+                        </div>
+                    </div>
+                    <button class="btn btn-info btn-non-dropdown " onclick="convertToJSON()">Convert to JSON</button>
+                    
+                </div>
+            </div>
+        <!-- </form> -->
+        <button class="btn btn-info btn-non-dropdown float-right " onclick="createNewItem()" style="background-color: #EC7211; border-color: #EC7211;">Create item</button>
+                    
+    </div>
+</div>
+<!-- Hover table card end -->
+<!-- Main-body end -->
+<div id="styleSelector">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+{% endblock %}
+{% block script%}
+<script>
+    var rowIndex = 2;
+    var dataMarked = 1;
+    var myTable = document.getElementById('myTable');
+    var tableBody = document.querySelector('#myTable tbody');
+    
+    var type = {
+        "S": "String",
+        "N": "Number",
+        "BOOL": "Boolean",
+        "B": "Binary",
+        "NULL": "Null",
+        "SS": "String Set",
+        "NS": "Number Set",
+        "BS": "Binary Set",
+        "L": "List",
+        "M": "Map"
+    }
+    var count = 1;
+
+    function createNewItem(){
+        fetch(`{{url_for('ajax_edit_item')}}?table-name={{table_name}}`,{
+            method: 'post',
+            body: JSON.stringify({
+                "table_name": '{{table_name}}',
+                "data": convertToJSON()
+            }),
+            headers: {
+                "content-type": "application/json"
+            },
+            redirect: "follow"
+
+        }).then(response => {
+            if(response.ok){
+                window.location.href = "{{url_for('items_page')}}"
+            }
+            // return response.json();
+        });
+    }
+
+    function convertToJSON(){
+        partitionKey = document.getElementById('partition-key').getAttribute('data-partition-key');
+        partitionValue = document.getElementById('partition-value');
+        sortKey = document.getElementById('sort-key').getAttribute('data-sort-key');
+        sortValue = document.getElementById('sort-value');
+        json = {};
+        if(partitionValue.getAttribute('data-type') == 'N'){
+            // json[`${partitionKey}`] = `${partitionValue.value}`;
+            json[`${partitionKey}`] = parseFloat(partitionValue.value);
+
+        }
+        else{
+            json[`${partitionKey}`] = partitionValue.value;
+
+        }
+        if(sortValue.getAttribute('data-type') == 'N'){
+            // json[`${sortKey}`] = `${sortValue.value}`;
+            json[`${sortKey}`] = parseFloat(sortValue.value);
+
+        }
+        else{
+            json[`${sortKey}`] = sortValue.value;
+
+        }
+    
+        
+        for(let i = 3, row; row = document.getElementById('myTable').rows[i]; i++)
+        {   
+            if(row.classList.contains('have-set-element'))
+            {
+
+                let attributeName = row.querySelector('.col-2 input').value;
+                let field = row.querySelector('.col-8 button');
+                let keyType = field.getAttribute('data-key-type');
+                let value = [];
+                json[`${attributeName}`] = [];
+                i += 1;
+                while(myTable.rows[i] != undefined){
+                    let childRow = myTable.rows[i];
+                    
+                    if(childRow.classList.contains(`child-element-${field.getAttribute('data-marked')}`)){
+                        console.log('running');
+                        if(keyType == 'NN'){
+                            json[`${attributeName}`].push(parseFloat(childRow.querySelector('.col-8 input').value));
+                        }
+                        else{
+                            json[`${attributeName}`].push(childRow.querySelector('.col-8 input').value);
+
+                        }
+                        i++;
+                    }
+                    else{
+                        
+                        break;
+                    }
+                }
+
+            }
+            else
+            {
+                let attributeName = row.querySelector('.col-2 input').value;
+                let keyType = row.querySelector('.col-1 h6').getAttribute('data-key-type');
+                if(keyType == "BOOL")
+                {
+                    let field = row.querySelectorAll('.col-8 .form-check input');
+                    field.forEach(el => {
+                        if(el.checked){
+                            json[`${attributeName}`] = el.value;
+                        }
+                    });
+                }
+                else{
+                    let field = row.querySelector('.col-8 input');
+                    // let keyType = field.getAttribute('data-key-type');
+                    if(keyType == "n"){
+                        json[`${attributeName}`] = parseFloat(field.value);
+                    }
+                    else{
+                        json[`${attributeName}`] = field.value;
+                    }
+                }
+                
+            }
+            
+            
+        }
+        console.log(json);
+        return json;
+    }
+
+    function deleteRow(element) {
+        let currentRow = element.closest('tr');
+        let markedNumber = element.getAttribute('data-marked');
+        if(markedNumber == null)
+        {
+            document.getElementById("myTable").deleteRow(currentRow.rowIndex);
+
+        }
+        else{
+            let startIndexRemove = currentRow.rowIndex + 1;
+            while(myTable.rows[startIndexRemove] != undefined){
+                let row = myTable.rows[startIndexRemove];
+                if(row.classList.contains(`child-element-${markedNumber}`)){
+                    document.getElementById('myTable').deleteRow(startIndexRemove);
+                }
+                else{
+                    break;
+                }
+            }
+            document.getElementById('myTable').deleteRow(currentRow.rowIndex);
+            
+        }
+    }
+
+    var dropDownMain = document.querySelectorAll('.dropdown-main div a');
+    dropDownMain.forEach(el => el.addEventListener('click', (el) => {
+        handlerOption(el.currentTarget);
+    }));
+
+    function handlerOption(element){
+        let valueType = element.innerHTML;
+        let keyType = element.getAttribute("data-type");
+        if(valueType == 'String' || valueType == 'Number' || valueType == 'Binary'){
+            tableBody.insertAdjacentHTML('beforeend', addRows_SingleElement(valueType, keyType));
+        }
+        if(valueType == 'Boolean')
+        {
+            tableBody.insertAdjacentHTML('beforeend', addRow_BooleanElement(valueType, keyType));
+        }
+        if(valueType == 'Null')
+        {
+            tableBody.insertAdjacentHTML('beforeend', addRows_NullElement());
+        }
+        if(valueType == 'String set' || valueType == 'Binary set' || valueType == 'Number set'){
+            tableBody.insertAdjacentHTML('beforeend', addRows_SetElement(valueType, keyType));
+        }
+    }
+
+    function addRows_SetElement(valueType, keyType){
+        let row = `<tr class='d-flex have-set-element'>
+                        <td class="col-2">
+                            <input name="nameColumnTable" type="text" class="form-control input-sm" value="NewValue">
+                        </td>
+                        <td class='col-8 d-flex'>
+                            <button class="btn btn-primary btn-non-dropdown btn-outline-primary" onclick='handler_addRows_SetElement(this)' data-key-type="${keyType}" data-value-type="${valueType}" data-marked="${dataMarked}"><i class="ti-plus"></i>Insert a field</button>
+                        </td>
+                        <td class='col-1' style="position: relative; text-align: center;">
+                            <h6 class="text-center" data-key-type="${keyType}" style="text-transform: none; font-weight: normal;font-weight: bold;">
+                                ${valueType}
+                            </h6>
+                        </td>
+                        <td class="col-1">
+                            <button id="delete-btn" onclick="deleteRow(this)" data-marked="${dataMarked++}" class="btn btn-outline-dark btn-square">Delete</button>
+                        </td>
+                    </tr>`
+        return row;
+    }
+    function handler_addRows_SetElement(element){
+        let markedNumber = element.getAttribute('data-marked');
+        let currentRow = element.closest('tr');
+        let keyType = element.getAttribute('data-key-type');
+        let valueType = element.getAttribute('data-value-type');
+        currentRow.insertAdjacentHTML('afterend', addRows_ElementForSet(markedNumber, keyType, valueType));
+    }
+    
+    function addRows_ElementForSet(markedNumber, keyType, valueType){
+        let row = `<tr class="d-flex child-element-${markedNumber}">
+                        <td class="col-2 text-center">
+                            <i class="ti-plus" style="position: absolute; top: 50%; transform: translateY(-50%); font-size: 20px;"></i>
+                        </td>
+                        <td class="col-8">
+                            <input type="text" class="form-control input-sm" id="nameColumnTable1"
+                            name="nameColumnTable1" data-type="${keyType}" placeholder="Empty value">
+                        </td>
+                        <td class="col-1">
+                            <h6 class="text-center" data-key-type="${keyType}" style="text-transform: none; font-weight: normal;font-weight: bold;">${valueType}
+                            </h6>
+                        </td>
+                        <td class="col-1">
+                            <button id="delete-btn" onclick="deleteRow(this)" class="btn btn-outline-dark btn-square">Delete</button>
+                        </td>
+                    </tr>`
+        return row;
+    }
+    function addRows_SingleElement(valueType, keyType){
+        rowIndex +=1
+        let row = `<tr class='d-flex'>
+                        <td class="col-2">
+                            <input name="nameColumnTable" type="text" class="form-control input-sm" value="NewValue">
+                        </td>
+                        <td class='col-8'>
+                            <input type="text" class="form-control input-sm" data-type="${keyType}" id="nameColumnTable1"
+                            name="nameColumnTable1" placeholder="Empty value">
+                        </td>
+                        <td class='col-1' style="position: relative; text-align: center;">
+                            <h6 class="text-center" data-key-type="${keyType}" style="text-transform: none; font-weight: normal;font-weight: bold;">
+                                ${valueType}
+                            </h6>
+                        </td>
+                        <td class="col-1">
+                            <button id="delete-btn" data-row-index='${rowIndex}' onclick='deleteRow(this)' class="btn btn-outline-dark btn-square">Delete</button>
+                        </td>
+                    </tr>`
+        return row;
+    }
+    function addRow_BooleanElement(valueType, keyType){
+        let row = `<tr class='d-flex'>
+                        <td class="col-2">
+                            <input name="nameColumnTable" type="text" class="form-control input-sm" value="NewValue">
+                        </td>
+                        <td class='col-8 d-flex flex-row'>
+                            <div class="form-check ml-4 pr-3">
+                                <input data-type="${keyType}" class="form-check-input" type="radio" name="flexRadioDefault" id="radio" value="true" >
+                                <label class="form-check-label pl-0" for="radio">
+                                    True
+                                </label>
+                            </div>
+                            <div class="form-check ml-4">
+                                <input data-type="${keyType}" class="form-check-input" type="radio" name="flexRadioDefault" id="radio" value="false" >
+                                <label class="form-check-label pl-0" for="radio">
+                                    False
+                                </label>
+                            </div>
+                        </td>
+                        <td class='col-1' style="position: relative; text-align: center;">
+                            <h6 class="text-center" data-key-type="${keyType}" style="text-transform: none; font-weight: normal;font-weight: bold;">
+                                ${valueType}
+                            </h6>
+                        </td>
+                        <td class="col-1">
+                            <button id="delete-btn" onclick='deleteRow(this)' class="btn btn-outline-dark btn-square">Delete</button>
+                        </td>
+                    </tr>`
+        return row;
+    }
+    function addRow_NullElement(){
+        let row = `<tr class='d-flex'>
+                        <td class="col-2">
+                            <input name="nameColumnTable" type="text" class="form-control input-sm" value="NewValue">
+                        </td>
+                        <td class='col-8 d-flex flex-row'>
+                            <h6 style="text-transform: none; font-weight: normal;font-weight: bold;">
+                                Null
+                            </h6>
+                        </td>
+                        <td class='col-1' style="position: relative; text-align: center;">
+                            <h6 class="text-center" style="text-transform: none; font-weight: normal;font-weight: bold;">
+                                Null
+                            </h6>
+                        </td>
+                        <td class="col-1">
+                            <button id="delete-btn" class="btn btn-outline-dark btn-square">Delete</button>
+                        </td>
+                    </tr>`
+        return row;
+    }
+    
+    
+
+</script>
+{% endblock %}
